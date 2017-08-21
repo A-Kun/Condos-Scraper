@@ -12,7 +12,7 @@ Works great with Cron or Windows Task Scheduler for email subscriptions.
 
 Settings are defined in `config.json`. See `config.json.example` for a sample setup.
 
-Make sure `condos_scraper` is the current directory, then:
+Make sure `Condos-Scraper` is the current directory, then:
 
 ```
 $ pip3 install ftfy
