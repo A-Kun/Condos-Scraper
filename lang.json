@@ -1,0 +1,28 @@
+{
+  "en-ca": {
+    "id": "ID",
+    "name": "Condo Name, Unit No.",
+    "price": "Price",
+    "size": "Size",
+    "per_ft2": "Price per sqft",
+    "bed": "Bedrooms",
+    "shower": "Bathrooms",
+    "parking": "Parking",
+    "dom": "D.O.M",
+    "maint_fee": "Maintainance Fees",
+    "generate": "Generated at"
+  },
+  "zh-cn": {
+    "id": "ID",
+    "name": "公寓名，门牌号",
+    "price": "价格",
+    "size": "尺寸",
+    "per_ft2": "每平方英尺价格",
+    "bed": "卧室",
+    "shower": "卫生间",
+    "parking": "停车位",
+    "dom": "已上市天数",
+    "maint_fee": "物业费",
+    "generate": "生成于"
+  }
+}

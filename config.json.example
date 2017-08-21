@@ -1,0 +1,19 @@
+{
+  "smtp": {
+    "from_name": "John Doe",
+    "from_email": "john.doe@example.com",
+    "password": "password",
+    "smtp_server": "smtp.example.com",
+    "port": 465
+  },
+  "following_areas": [
+    590,
+    591,
+    593
+  ],
+  "mailing_list": [
+    "alice@example.com",
+    "bob@example.com",
+    "charlie@example.com"
+  ]
+}
