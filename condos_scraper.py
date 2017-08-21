@@ -123,7 +123,8 @@ def fetch_area(area_id):
     url = ('https://condos.ca/search?for=sale&search_by=Neighbourhood&polygo' +
            'n=&is_nearby=&area_ids=' + str(area_id) +
            '&buy_min=0&buy_max=99999999&rent_min=800&rent_max=6000&unit_area' +
-           '_min=0&unit_area_max=99999999&type=0&beds_min=0')
+           '_min=0&unit_area_max=99999999&type=0&beds_min=0'
+           )
     return do_parse(download(url))
 
 
@@ -177,7 +178,8 @@ def send_condo_email(following_areas, lang, mailing_list):
         body += ftfy.fix_encoding(build_email(condos, lang))
 
     body += ('<p>' + lang_dict['generate'] + ' ' +
-             str(datetime.datetime.today()).split('.')[0] + '</p>')
+             str(datetime.datetime.today()).split('.')[0] + '</p>'
+             )
 
     smtp_config = read_config_file('smtp')
 
@@ -198,4 +200,7 @@ def send_condo_email(following_areas, lang, mailing_list):
 if __name__ == '__main__':
     following_areas = read_config_file('following_areas')
     mailing_list = read_config_file('mailing_list')
-    send_condo_email(following_areas, 'zh-cn', mailing_list)
+    send_condo_email(following_areas,
+                     read_config_file('language'),
+                     mailing_list,
+                     )

@@ -1,4 +1,5 @@
 {
+  "language": "en-ca",
   "smtp": {
     "from_name": "John Doe",
     "from_email": "john.doe@example.com",
