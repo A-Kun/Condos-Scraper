@@ -99,3 +99,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# macOS
+.DS_Store
+
+# Never commit credentials!
+config.json
