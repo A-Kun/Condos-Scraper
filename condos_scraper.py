@@ -32,6 +32,7 @@ AREA_CODE = {
     590: 'Downtown Toronto',
     591: 'Scarborough',
     593: 'North York',
+    597: 'Midtown',
 }
 
 
