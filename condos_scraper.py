@@ -18,7 +18,6 @@ along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import datetime
-import ftfy
 import json
 import pyhtgen
 import requests
@@ -114,7 +113,8 @@ def do_parse(html):
             next_condo.append('$' + list_fee_ul[0].findAll(
                 'li', recursive=False)[2].text.strip().split('$')[-1])
 
-            condos.append(next_condo)
+            if len(dom_number) < 2:
+                condos.append(next_condo)
         except Exception as e:
             print(e)
             print(rows[i])
@@ -152,6 +152,24 @@ def read_config_file(config):
         exit(-1)
 
 
+def build_html_table(header_row, rows):
+    result = '<table>'
+
+    if header_row:
+        result += '<tr>'
+        for next_cell in header_row:
+            result += '<th>' + next_cell + '</th>'
+        result += '</tr>'
+
+    for next_row in rows:
+        result += '<tr>'
+        for next_cell in next_row:
+            result += '<td>' + next_cell + '</td>'
+        result += '</tr>'
+
+    return result + '</table>'
+
+
 def build_email(condos, lang):
     lang_dict = read_lang_file(lang)
     header_row = [
@@ -167,6 +185,7 @@ def build_email(condos, lang):
         lang_dict['maint_fee'],
     ]
     htmlcode = pyhtgen.table(condos, header_row=header_row)
+    #htmlcode = build_html_table(header_row, condos)
     return htmlcode
 
 
@@ -177,7 +196,7 @@ def send_condo_email(following_areas, lang, mailing_list):
     for next_area in following_areas:
         condos = fetch_area(next_area)
         body += '<h2>' + AREA_CODE[next_area] + '</h2>'
-        body += ftfy.fix_encoding(build_email(condos, lang))
+        body += build_email(condos, lang)
 
     body += ('<p>' + lang_dict['generate'] + ' ' +
              str(datetime.datetime.today()).split('.')[0] + '</p>'
