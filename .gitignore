@@ -105,3 +105,4 @@ ENV/
 
 # Never commit credentials!
 config.json
+config.json.prod
