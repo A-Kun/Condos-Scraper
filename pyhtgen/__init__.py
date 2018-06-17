@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 """
 HTML.py - v0.04 2009-07-28 Philippe Lagadec
 
