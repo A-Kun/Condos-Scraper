@@ -15,7 +15,6 @@ Settings are defined in `config.json`. See `config.json.example` for a sample se
 Make sure `Condos-Scraper` is the current directory, then:
 
 ```
-$ pip3 install ftfy
 $ pip3 install requests
 $ pip3 install beautifulsoup4
 $ python3 condos_scraper.py
