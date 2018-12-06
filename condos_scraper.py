@@ -174,7 +174,7 @@ def generate_subject():
     response = download('https://api.exchangeratesapi.io/latest?' +
                         'symbols=CNY&base=CAD')
     response_json = json.loads(response)
-    rate = round(response_json['rates']['CNY'], 2)
+    rate = round(response_json['rates']['CNY'], 3)
     return 'Condos {} | $1 = ¥{}'.format(str(datetime.date.today()), rate)
 
 
