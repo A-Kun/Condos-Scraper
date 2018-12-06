@@ -152,24 +152,6 @@ def read_config_file(config):
         exit(-1)
 
 
-def build_html_table(header_row, rows):
-    result = '<table>'
-
-    if header_row:
-        result += '<tr>'
-        for next_cell in header_row:
-            result += '<th>' + next_cell + '</th>'
-        result += '</tr>'
-
-    for next_row in rows:
-        result += '<tr>'
-        for next_cell in next_row:
-            result += '<td>' + next_cell + '</td>'
-        result += '</tr>'
-
-    return result + '</table>'
-
-
 def build_email(condos, lang):
     lang_dict = read_lang_file(lang)
     header_row = [
@@ -185,8 +167,15 @@ def build_email(condos, lang):
         lang_dict['maint_fee'],
     ]
     htmlcode = pyhtgen.table(condos, header_row=header_row)
-    #htmlcode = build_html_table(header_row, condos)
     return htmlcode
+
+
+def generate_subject():
+    response = download('https://api.exchangeratesapi.io/latest?' +
+                        'symbols=CNY&base=CAD')
+    response_json = json.loads(response)
+    rate = round(response_json['rates']['CNY'], 2)
+    return 'Condos {} | $1 = ¥{}'.format(str(datetime.date.today()), rate)
 
 
 def send_condo_email(following_areas, lang, mailing_list):
@@ -201,6 +190,7 @@ def send_condo_email(following_areas, lang, mailing_list):
     body += ('<p>' + lang_dict['generate'] + ' ' +
              str(datetime.datetime.today()).split('.')[0] + '</p>'
              )
+    subject = generate_subject()
 
     smtp_config = read_config_file('smtp')
 
@@ -211,7 +201,7 @@ def send_condo_email(following_areas, lang, mailing_list):
             smtp_config['password'],
             '',
             next_email,
-            'Condo Listings ' + str(datetime.date.today()),
+            subject,
             body,
             smtp_config['smtp_server'],
             smtp_config['port'],
