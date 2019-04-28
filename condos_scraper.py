@@ -63,7 +63,9 @@ def do_parse(html):
 def fetch_area(area):
     _id = area['id']
     _type = area['type']
-    url = 'https://condos.ca/toronto/north-york/condos-for-sale?tab=listings&{}_id={}'.format(_type, _id)
+    url = ('https://condos.ca/toronto/north-york/condos-for-sale' +
+           '?tab=listings&{}_id={}'
+           ).format(_type, _id)
     return do_parse(download(url))
 
 

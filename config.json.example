@@ -8,9 +8,26 @@
     "port": 465
   },
   "following_areas": [
-    590,
-    591,
-    593
+    {
+      "id": "14",
+      "type": "sublocality",
+      "name": "Downtown Toronto"
+    },
+    {
+      "id": "779",
+      "type": "neighbourhood",
+      "name": "Scarborough Town Centre"
+    },
+    {
+      "id": "21",
+      "type": "sublocality",
+      "name": "Midtown Toronto"
+    },
+    {
+      "id": "17",
+      "type": "sublocality",
+      "name": "North York"
+    }
   ],
   "mailing_list": [
     "alice@example.com",
