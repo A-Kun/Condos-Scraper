@@ -31,7 +31,9 @@
   ],
   "mailing_list": [
     "alice@example.com",
-    "bob@example.com",
+    "bob@example.com"
+  ],
+  "monthly_mailing_list": [
     "charlie@example.com"
   ]
 }

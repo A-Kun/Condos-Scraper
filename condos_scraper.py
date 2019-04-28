@@ -152,6 +152,8 @@ def send_condo_email(following_areas, lang, mailing_list, debug=False):
 if __name__ == '__main__':
     following_areas = read_config_file('following_areas')
     mailing_list = read_config_file('mailing_list')
+    if datetime.datetime.today().day == 1:
+        mailing_list += read_config_file('monthly_mailing_list')
     send_condo_email(following_areas,
                      read_config_file('language'),
                      mailing_list,
