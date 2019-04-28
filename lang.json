@@ -2,6 +2,8 @@
   "en-ca": {
     "id": "ID",
     "name": "Condo Name, Unit No.",
+    "address": "Address",
+    "unit": "Unit",
     "price": "Price",
     "size": "Size",
     "per_ft2": "Price per sqft",
@@ -15,6 +17,8 @@
   "zh-cn": {
     "id": "ID",
     "name": "公寓名，门牌号",
+    "address": "地址",
+    "unit": "门牌号",
     "price": "价格",
     "size": "尺寸",
     "per_ft2": "每平方英尺价格",

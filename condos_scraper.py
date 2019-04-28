@@ -2,7 +2,7 @@
 
 
 """
-Copyright Andrew Wang, 2017
+Copyright Andrew Wang, 2019
 Distributed under the terms of the GNU General Public License.
 This is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,15 +27,6 @@ from email.mime.text import MIMEText
 from email.utils import formataddr
 
 
-AREA_CODE = {
-    590: 'Downtown Toronto',
-    '591&nh_ids[]=154': 'STC',
-    591: 'Scarborough',
-    593: 'North York',
-    597: 'Midtown',
-}
-
-
 def download(url):
     data = requests.get(url)
     return data.text
@@ -58,75 +49,21 @@ def send_email(from_name, from_email, password, to_name, to_email, subject,
 
 
 def do_parse(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    listing_tab = soup.find(id='listing-tab')
-    rows = listing_tab.findAll('div', {'class': 'listing-info-sec'})
     condos = []
-    for i in range(len(rows)):
-        try:
-            next_condo = []
-
-            # id
-            next_condo.append(rows[i].parent.parent['href'].split('-')[-1])
-
-            # name
-            next_condo.append(rows[i].findAll(
-                'span', {'class': 'listing-name'})[0].text.strip())
-
-            # price
-            next_condo.append(rows[i].findAll(
-                'span', {'class': 'tag-price'})[0].text.strip())
-
-            # size
-            size_div = rows[i].findAll('div', {'class': 'listing-size-div'})
-            next_condo.append(size_div[0].findAll(
-                'span', recursive=False)[0].text.strip())
-
-            # per_ft2
-            teal_span = rows[i].findAll('span', {'class': 'teal'})
-            if len(teal_span) > 0:
-                next_condo.append(teal_span[0].text.strip())
-            else:
-                next_condo.append('')
-
-            # bed, shower, parking
-            bed_bath_div = rows[i].findAll('div', {'class':
-                                                   'listing-bed-bath-div'})
-            next_condo.append(bed_bath_div[0].findAll(
-                'span', recursive=False)[0].text.strip())
-            next_condo.append(bed_bath_div[0].findAll(
-                'span', recursive=False)[1].text.strip())
-            next_condo.append(bed_bath_div[0].findAll(
-                'span', recursive=False)[2].text.strip())
-
-            # dom, maint_fee
-            list_fee_ul = rows[i].findAll('ul', {'class': 'list-fee'})
-            dom_text = list_fee_ul[0].findAll('li',
-                                              recursive=False)[1].text.strip()
-            dom_number = ''
-            for j in range(len(dom_text) - 1, -1, -1):
-                if dom_text[j].isdigit():
-                    dom_number += dom_text[j]
-                else:
-                    break
-            next_condo.append(dom_number)
-            next_condo.append('$' + list_fee_ul[0].findAll(
-                'li', recursive=False)[2].text.strip().split('$')[-1])
-
-            if len(dom_number) < 2:
-                condos.append(next_condo)
-        except Exception as e:
-            print(e)
-            print(rows[i])
+    soup = BeautifulSoup(html, 'html.parser')
+    list_row = soup.find(id='listRow')
+    list_row_children = list_row.children
+    for next_child in list_row_children:
+        next_condo = next_child.get_text(separator=', ', strip=True)
+        if 'Login' not in next_condo and next_condo.count(', ') == 8:
+            condos.append(next_condo.split(', '))
     return condos
 
 
-def fetch_area(area_id):
-    url = ('https://condos.ca/search?for=sale&search_by=Neighbourhood&polygo' +
-           'n=&is_nearby=&area_ids=' + str(area_id) +
-           '&buy_min=0&buy_max=99999999&rent_min=800&rent_max=6000&unit_area' +
-           '_min=0&unit_area_max=99999999&type=0&beds_min=0'
-           )
+def fetch_area(area):
+    _id = area['id']
+    _type = area['type']
+    url = 'https://condos.ca/toronto/north-york/condos-for-sale?tab=listings&{}_id={}'.format(_type, _id)
     return do_parse(download(url))
 
 
@@ -155,15 +92,14 @@ def read_config_file(config):
 def build_email(condos, lang):
     lang_dict = read_lang_file(lang)
     header_row = [
-        lang_dict['id'],
-        lang_dict['name'],
         lang_dict['price'],
-        lang_dict['size'],
-        lang_dict['per_ft2'],
+        lang_dict['dom'],
+        lang_dict['address'],
+        lang_dict['unit'],
         lang_dict['bed'],
         lang_dict['shower'],
         lang_dict['parking'],
-        lang_dict['dom'],
+        lang_dict['size'],
         lang_dict['maint_fee'],
     ]
     htmlcode = pyhtgen.table(condos, header_row=header_row)
@@ -178,34 +114,37 @@ def generate_subject():
     return 'Condos {} | $1 = ¥{}'.format(str(datetime.date.today()), rate)
 
 
-def send_condo_email(following_areas, lang, mailing_list):
+def send_condo_email(following_areas, lang, mailing_list, debug=False):
     lang_dict = read_lang_file(lang)
     body = ''
 
     for next_area in following_areas:
         condos = fetch_area(next_area)
-        body += '<h2>' + AREA_CODE[next_area] + '</h2>'
+        body += '<h2>' + next_area['name'] + '</h2>'
         body += build_email(condos, lang)
 
     body += ('<p>' + lang_dict['generate'] + ' ' +
              str(datetime.datetime.today()).split('.')[0] + '</p>'
              )
-    subject = generate_subject()
 
-    smtp_config = read_config_file('smtp')
+    if debug:
+        print(body)
+    else:
+        subject = generate_subject()
+        smtp_config = read_config_file('smtp')
 
-    for next_email in mailing_list:
-        send_email(
-            smtp_config['from_name'],
-            smtp_config['from_email'],
-            smtp_config['password'],
-            '',
-            next_email,
-            subject,
-            body,
-            smtp_config['smtp_server'],
-            smtp_config['port'],
-        )
+        for next_email in mailing_list:
+            send_email(
+                smtp_config['from_name'],
+                smtp_config['from_email'],
+                smtp_config['password'],
+                '',
+                next_email,
+                subject,
+                body,
+                smtp_config['smtp_server'],
+                smtp_config['port'],
+            )
 
 
 if __name__ == '__main__':
