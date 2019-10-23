@@ -106,3 +106,7 @@ ENV/
 # Never commit credentials!
 config.json
 config.json.prod
+
+# Output files
+output.txt
+subject.txt

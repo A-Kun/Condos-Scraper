@@ -130,7 +130,10 @@ def send_condo_email(following_areas, lang, mailing_list, debug=False):
              )
 
     if debug:
-        print(body)
+        with open('output.txt', 'w', encoding='utf-8') as file:
+            file.write(body)
+        with open('subject.txt', 'w', encoding='utf-8') as file:
+            file.write(generate_subject())
     else:
         subject = generate_subject()
         smtp_config = read_config_file('smtp')
@@ -157,4 +160,5 @@ if __name__ == '__main__':
     send_condo_email(following_areas,
                      read_config_file('language'),
                      mailing_list,
+                     True
                      )
